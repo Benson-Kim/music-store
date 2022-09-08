@@ -7,13 +7,22 @@ const app = express();
 
 app.use(cors({ origin: true }));
 
+app.use(express.json());
+
 app.get("/", (req, res) => {
 	return res.send("Hi, well set to entertain you");
 });
 
 // routes
 const userRoutes = require("./routes/authRoute");
-app.use("/users", userRoutes);
+const albumRoutes = require("./routes/albumRoute");
+const artistRoutes = require("./routes/artistRoute");
+const songsRoutes = require("./routes/songsRoute");
+
+app.use("/", userRoutes);
+app.use("/", albumRoutes);
+app.use("/", artistRoutes);
+app.use("/", songsRoutes);
 
 mongoose.connect(process.env.DB_STRING, { useNewUrlParser: true });
 mongoose.connection

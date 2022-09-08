@@ -103,7 +103,7 @@ const Header = () => {
 						initial={{ opacity: 0, y: 50 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 50 }}
-						className='absolute z-10 flex flex-col gap-2 p-3 rounded-lg shadow-lg right-2 top-16 w-275 bg-card backdrop-blur-sm'
+						className='absolute z-10 flex flex-col gap-2 p-3 rounded-lg shadow-lg right-2 top-14 w-275 bg-card backdrop-blur-sm'
 					>
 						<NavLink to='/userprofile'>
 							<p className='transition-all duration-150 ease-in-out cursor-pointer text-textColor hover:font-semibold'>
@@ -113,7 +113,19 @@ const Header = () => {
 						<p className='transition-all duration-150 ease-in-out cursor-pointer text-textColor hover:font-semibold'>
 							My Favourites
 						</p>
+
 						<hr />
+						{user?.user?.role === "admin" && (
+							<>
+								<NavLink to='/dashboard/home'>
+									<p className='transition-all duration-150 ease-in-out cursor-pointer text-textColor hover:font-semibold'>
+										Dashboard
+									</p>
+								</NavLink>
+								<hr />
+							</>
+						)}
+
 						<p
 							onClick={logout}
 							className='transition-all duration-150 ease-in-out cursor-pointer text-textColor hover:font-semibold'
