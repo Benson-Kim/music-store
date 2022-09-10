@@ -78,7 +78,58 @@ const updateUserData = async (decoded, req, res) => {
 	}
 };
 
-const register = async (req, res) => {};
-const users = async (req, res) => {};
+const getUsers = async (req, res) => {
+	try {
+		const options = {
+			sort: {
+				createdAt: 1,
+			},
+		};
+		const allUsers = await user.find(options);
+		return res.status(200).send({
+			success: true,
+			data: allUsers,
+		});
+	} catch (error) {
+		return res.status(400).send({
+			success: false,
+			message: error.message,
+		});
+	}
+};
 
-module.exports = { login, register, users };
+const updateUserRole = async (req, res) => {
+	const filter = { _id: req.params.userId };
+	const role = req.body.data.role;
+	const options = {
+		upsert: true,
+		new: true,
+	};
+	try {
+		const result = await user.findOneAndUpdate(
+			filter,
+			{ role: role },
+			options,
+		);
+		res.status(200).send({ user: result });
+	} catch (error) {
+		res.status(400).json({
+			status: 400,
+			success: false,
+			message: error.message,
+		});
+	}
+};
+
+const delUser = async (req, res) => {
+	const filter = { _id: req.params.userId };
+
+	const result = await user.deleteOne(filter);
+	if (result.deletedCount === 1) {
+		res.status(200).send({ success: true, msg: "User data Deleted" });
+	} else {
+		res.status(404).send({ success: false, msg: "User not Found" });
+	}
+};
+
+module.exports = { login, delUser, getUsers, updateUserRole };
