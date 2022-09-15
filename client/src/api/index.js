@@ -1,3 +1,4 @@
+import { async } from "@firebase/util";
 import axios from "axios";
 
 const baseURL = "http://localhost:4000";
@@ -42,6 +43,15 @@ export const deleteUser = async (userId) => {
 };
 
 // Songs
+export const saveNewSong = async (data) => {
+	try {
+		const res = await axios.post(`${baseURL}/save-song`, { ...data });
+		return res.data;
+	} catch (error) {
+		return error.message;
+	}
+};
+
 export const getSongs = async () => {
 	try {
 		const res = await axios.get(`${baseURL}/get-songs`);
@@ -54,7 +64,6 @@ export const getSongs = async () => {
 export const getArtists = async () => {
 	try {
 		const res = await axios.get(`${baseURL}/get-artists`);
-		console.log(res.data);
 		return res.data;
 	} catch (error) {
 		return error.message;

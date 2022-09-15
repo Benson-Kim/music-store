@@ -37,10 +37,12 @@ const getSong = async (req, res) => {
 };
 
 const addSong = async (req, res) => {
-	const { name, songURL, artist, album, language, category } = req.body;
+	const { name, songURL, imageURL, artist, album, language, category } =
+		req.body;
 	const newSong = song({
 		name: name,
 		songURL: songURL,
+		imageURL: imageURL,
 		artist: artist,
 		album: album,
 		language: language,
@@ -62,11 +64,13 @@ const addSong = async (req, res) => {
 
 const updateSong = async (req, res) => {
 	const filter = { _id: req.params.id };
-	const { name, songURL, artist, album, language, category } = req.body;
+	const { name, songURL, imageURL, artist, album, language, category } =
+		req.body;
 	const options = { upsert: true, new: true };
 	const album_updates = {
 		name: name,
 		songURL: songURL,
+		imageURL: imageURL,
 		artist: artist,
 		album: album,
 		language: language,

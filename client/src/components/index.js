@@ -5,3 +5,4 @@ export { default as Dashboard } from "./admin/Dashboard";
 export { default as AdminHome } from "./admin/Home";
 export { default as Users } from "./admin/Users";
 export { default as Songs } from "./admin/Songs";
+export { default as SongCard } from "./admin/SongCard";
