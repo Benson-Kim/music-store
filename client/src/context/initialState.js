@@ -10,4 +10,6 @@ export const initialState = {
 	artistFilter: null,
 	albumFilter: null,
 	langFilter: null,
+
+	alertType: null,
 };

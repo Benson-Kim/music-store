@@ -9,6 +9,7 @@ import Album from "./Album";
 import Artists from "./Artists";
 
 import { isActiveStyles, isNotActiveStyles } from "../../utils/styles";
+import Alert from "../Alert";
 
 const Dashboard = () => {
 	return (
@@ -61,6 +62,7 @@ const Dashboard = () => {
 					<Route path='/newsong' element={<NewSong />} />
 				</Routes>
 			</div>
+			<Alert type={""} />
 		</div>
 	);
 };

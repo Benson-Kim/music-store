@@ -5,7 +5,14 @@ import { motion } from "framer-motion";
 import { storage } from "../../config/firebase.config";
 
 import FilterButtons from "./FilterButtons";
-import { getAlbums, getArtists, getSongs, saveNewSong } from "../../api";
+import {
+	getAlbums,
+	getArtists,
+	getSongs,
+	saveNewAlbum,
+	saveNewArtist,
+	saveNewSong,
+} from "../../api";
 import { actionType, useStateValue } from "../../context/index";
 import { genreFilters, langFilters } from "../../utils/SupportFunctions";
 
@@ -26,6 +33,18 @@ const NewSong = () => {
 	const [audioLoading, setAudioLoading] = useState(false);
 	const [audioFileCover, setAudioFileCover] = useState(null);
 	const [audioUploadProgress, setAudioUploadProgress] = useState(0);
+
+	const [artistName, setArtistName] = useState("");
+	const [artistTwitter, setArtistTwitter] = useState("");
+	const [artistInstagram, setArtistInstagram] = useState("");
+	const [artistImageCover, setArtistImageCover] = useState(null);
+	const [artistUploadProgress, setArtistUploadProgress] = useState(0);
+	const [artistLoading, setArtistLoading] = useState(false);
+
+	const [albumName, setAlbumName] = useState("");
+	const [albumImageCover, setAlbumImageCover] = useState(null);
+	const [albumUploadProgress, setAlbumUploadProgress] = useState(0);
+	const [albumLoading, setAlbumLoading] = useState(false);
 
 	const [
 		{
@@ -63,6 +82,8 @@ const NewSong = () => {
 		if (isImage) {
 			setImageLoading(true);
 			setAudioLoading(true);
+			setAlbumLoading(true);
+			setArtistLoading(true);
 		}
 
 		const deleteRef = ref(storage, url);
@@ -73,6 +94,12 @@ const NewSong = () => {
 
 			setAudioFileCover(null);
 			setAudioLoading(false);
+
+			setArtistImageCover(null);
+			setArtistLoading(false);
+
+			setAlbumImageCover(null);
+			setAlbumLoading(false);
 		});
 	};
 
@@ -125,6 +152,63 @@ const NewSong = () => {
 		}
 	};
 
+	const saveArtist = () => {
+		if (
+			!artistName ||
+			!artistTwitter ||
+			!artistInstagram ||
+			!artistImageCover
+		) {
+			// throw a warning alert
+		} else {
+			setArtistLoading(true);
+
+			const data = {
+				name: artistName,
+				imageURL: artistImageCover,
+				twitter: artistTwitter,
+				instagram: artistInstagram,
+			};
+			saveNewArtist(data).then(() => {
+				getArtists().then((res) => {
+					dispatch({
+						type: actionType.SET_ALL_ARTISTS,
+						allArtists: res.data,
+					});
+				});
+			});
+			setArtistLoading(false);
+			setArtistImageCover(null);
+			setArtistName("");
+			setArtistTwitter("");
+			setArtistInstagram("");
+		}
+	};
+
+	const saveAlbum = () => {
+		if (!albumName || !albumImageCover) {
+			// throw a warning alert
+		} else {
+			setAlbumLoading(true);
+
+			const data = {
+				name: albumName,
+				imageURL: albumImageCover,
+			};
+			saveNewAlbum(data).then(() => {
+				getAlbums().then((res) => {
+					dispatch({
+						type: actionType.SET_ALL_ALBUMS,
+						allAlbums: res.data,
+					});
+				});
+			});
+			setAlbumLoading(false);
+			setAlbumName("");
+			setAlbumImageCover(null);
+		}
+	};
+
 	return (
 		<div className='flex flex-col items-center justify-between w-full gap-4 p-4 border border-gray-300 rounded-md lg:w-880'>
 			<input
@@ -142,6 +226,7 @@ const NewSong = () => {
 				<FilterButtons filterData={genreFilters} flag={"Category"} />
 			</div>
 
+			{/* Uploading song image cover file */}
 			<div className='w-full border-2 border-gray-300 border-dotted rounded-md cursor-pointer bg-card backdrop-blur-md h-300'>
 				{imageLoading && <FileLoader progress={imgUploadProgress} />}
 				{!imageLoading && (
@@ -226,6 +311,155 @@ const NewSong = () => {
 						className='w-full px-8 py-2 text-white bg-red-600 rounded-md cursor-pointer hover:shadow-lg'
 					>
 						Save song
+					</motion.button>
+				)}
+			</div>
+
+			{/* Uploading artist image cover file */}
+			<p className='text-xl font-semibold text-headingColor'>
+				Artist Details
+			</p>
+			<div className='w-full border-2 border-gray-300 border-dotted rounded-md cursor-pointer bg-card backdrop-blur-md h-300'>
+				{artistLoading && (
+					<FileLoader progress={artistUploadProgress} />
+				)}
+				{!artistLoading && (
+					<>
+						{!artistImageCover ? (
+							<FileUploader
+								updateState={setArtistImageCover}
+								setProgress={setArtistUploadProgress}
+								isLoading={setArtistLoading}
+								isImage={true}
+							/>
+						) : (
+							<div className='relative w-full h-full overflow-hidden rounded-md'>
+								<img
+									src={artistImageCover}
+									alt=''
+									className='object-cover w-full h-full'
+								/>
+
+								<i className='absolute p-3 text-xl text-white transition duration-200 ease-in-out bg-red-500 rounded-full cursor-pointer bottom-3 right-3 hover:shadow-md hover:bg-red-700 '>
+									<BiTrash
+										className=''
+										onClick={() =>
+											deleteFileObject(
+												artistImageCover,
+												"image",
+											)
+										}
+									/>
+								</i>
+							</div>
+						)}
+					</>
+				)}
+			</div>
+			{/* artist name */}
+			<input
+				value={artistName}
+				onChange={(e) => setArtistName(e.target.value)}
+				type='text'
+				placeholder='Type artist name'
+				className='w-full my-3 px-3 py-1.5 font-semibold shadow-sm rounded-md bg-transparent border outline-none border-gray-300 focus:border-gray-500 '
+			/>
+			<div className='flex items-center w-full p-3 border border-gray-300 rounded-md'>
+				<p className='font-semibold text-gray-400'>www.twitter.com/</p>
+				<input
+					value={artistTwitter}
+					onChange={(e) => setArtistTwitter(e.target.value)}
+					type='text'
+					placeholder='your twitter id'
+					className='w-full font-semibold bg-transparent outline-none text-textColor '
+				/>
+			</div>
+			<div className='flex items-center w-full p-3 border border-gray-300 rounded-md'>
+				<p className='font-semibold text-gray-400'>
+					www.instagram.com/
+				</p>
+				<input
+					value={artistInstagram}
+					onChange={(e) => setArtistInstagram(e.target.value)}
+					type='text'
+					placeholder='your instagram id'
+					className='w-full font-semibold bg-transparent outline-none text-textColor '
+				/>
+			</div>
+			{/* save */}
+			<div className='flex items-center justify-center w-60 '>
+				{artistLoading ? (
+					<DisableBtn />
+				) : (
+					<motion.button
+						onClick={saveArtist}
+						whileTap={{ scale: 0.75 }}
+						className='w-full px-8 py-2 text-white bg-red-600 rounded-md cursor-pointer hover:shadow-lg'
+					>
+						Save Artist
+					</motion.button>
+				)}
+			</div>
+
+			{/* Uploading album image cover file */}
+			<p className='text-xl font-semibold text-headingColor'>
+				Album Details
+			</p>
+			<div className='w-full border-2 border-gray-300 border-dotted rounded-md cursor-pointer bg-card backdrop-blur-md h-300'>
+				{albumLoading && <FileLoader progress={albumUploadProgress} />}
+				{!albumLoading && (
+					<>
+						{!albumImageCover ? (
+							<FileUploader
+								updateState={setAlbumImageCover}
+								setProgress={setAlbumUploadProgress}
+								isLoading={setAlbumLoading}
+								isImage={true}
+							/>
+						) : (
+							<div className='relative w-full h-full overflow-hidden rounded-md'>
+								<img
+									src={albumImageCover}
+									alt=''
+									className='object-cover w-full h-full'
+								/>
+
+								<i className='absolute p-3 text-xl text-white transition duration-200 ease-in-out bg-red-500 rounded-full cursor-pointer bottom-3 right-3 hover:shadow-md hover:bg-red-700 '>
+									<BiTrash
+										className=''
+										onClick={() =>
+											deleteFileObject(
+												albumImageCover,
+												"image",
+											)
+										}
+									/>
+								</i>
+							</div>
+						)}
+					</>
+				)}
+			</div>
+			{/* album name */}
+			<input
+				value={albumName}
+				onChange={(e) => setAlbumName(e.target.value)}
+				type='text'
+				placeholder='Type album name'
+				className='w-full my-3 px-3 py-1.5 font-semibold shadow-sm rounded-md bg-transparent border outline-none border-gray-300 focus:border-gray-500 '
+			/>
+
+			{/* save */}
+			<div className='flex items-center justify-center w-60 '>
+				{albumLoading ? (
+					<DisableBtn />
+				) : (
+					<motion.button
+						onClick={saveAlbum}
+						whileTap={{ scale: 0.75 }}
+						className='w-full px-8 py-2 text-white bg-red-600 rounded-md cursor-pointer hover:shadow-lg'
+					>
+						Save Album
 					</motion.button>
 				)}
 			</div>

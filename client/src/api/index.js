@@ -61,6 +61,16 @@ export const getSongs = async () => {
 	}
 };
 // Artists
+
+export const saveNewArtist = async (data) => {
+	try {
+		const res = await axios.post(`${baseURL}/save-artist`, { ...data });
+		return res.data;
+	} catch (error) {
+		return error.message;
+	}
+};
+
 export const getArtists = async () => {
 	try {
 		const res = await axios.get(`${baseURL}/get-artists`);
@@ -70,6 +80,16 @@ export const getArtists = async () => {
 	}
 };
 // Albums
+
+export const saveNewAlbum = async (data) => {
+	try {
+		const res = await axios.post(`${baseURL}/save-album`, { ...data });
+		return res.data;
+	} catch (error) {
+		return error.message;
+	}
+};
+
 export const getAlbums = async () => {
 	try {
 		const res = await axios.get(`${baseURL}/get-albums`);
