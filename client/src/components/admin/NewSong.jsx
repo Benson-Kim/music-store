@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { BiCloudUpload, BiTrash } from "react-icons/bi";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 import { storage } from "../../config/firebase.config";
 
@@ -25,7 +26,6 @@ import {
 
 const NewSong = () => {
 	const [songName, setSongName] = useState("");
-
 	const [imageLoading, setImageLoading] = useState(false);
 	const [songImageCover, setSongImageCover] = useState(null);
 	const [imgUploadProgress, setImgUploadProgress] = useState(0);
@@ -104,8 +104,9 @@ const NewSong = () => {
 	};
 
 	const saveSong = () => {
-		if (!songImageCover || !audioFileCover) {
-			// throw a warning alert
+		const emptySongFields = !audioFileCover || !songImageCover;
+		if (emptySongFields) {
+			toast.warning("Fill in all the fields first");
 		} else {
 			setAudioLoading(true);
 			setImageLoading(true);
@@ -119,6 +120,7 @@ const NewSong = () => {
 				language: langFilter,
 				category: filterTerm,
 			};
+			console.log(data);
 			saveNewSong(data).then(() => {
 				getSongs().then((res) => {
 					dispatch({
@@ -127,7 +129,7 @@ const NewSong = () => {
 					});
 				});
 			});
-			// setSongName("");
+			setSongName(null);
 			setAudioLoading(false);
 			setImageLoading(false);
 			setSongImageCover(null);
@@ -149,6 +151,8 @@ const NewSong = () => {
 				type: actionType.SET_FILTER_TERM,
 				filterTerm: null,
 			});
+
+			toast.success("Song saved successfully");
 		}
 	};
 
@@ -160,6 +164,7 @@ const NewSong = () => {
 			!artistImageCover
 		) {
 			// throw a warning alert
+			toast.warning("Please add all artist details");
 		} else {
 			setArtistLoading(true);
 
@@ -177,17 +182,20 @@ const NewSong = () => {
 					});
 				});
 			});
-			setArtistLoading(false);
-			setArtistImageCover(null);
 			setArtistName("");
 			setArtistTwitter("");
 			setArtistInstagram("");
+			setArtistLoading(false);
+			setArtistImageCover(null);
+
+			toast.success("New artist created successfully");
 		}
 	};
 
 	const saveAlbum = () => {
 		if (!albumName || !albumImageCover) {
 			// throw a warning alert
+			toast.warning("Please add album cover and album name");
 		} else {
 			setAlbumLoading(true);
 
@@ -203,9 +211,11 @@ const NewSong = () => {
 					});
 				});
 			});
-			setAlbumLoading(false);
 			setAlbumName("");
+			setAlbumLoading(false);
 			setAlbumImageCover(null);
+
+			toast.success("New album created successfully");
 		}
 	};
 
@@ -303,7 +313,7 @@ const NewSong = () => {
 			{/* save */}
 			<div className='flex items-center justify-center w-60 '>
 				{imageLoading || audioLoading ? (
-					<DisableBtn />
+					<LoadingBtn />
 				) : (
 					<motion.button
 						onClick={saveSong}
@@ -389,7 +399,7 @@ const NewSong = () => {
 			{/* save */}
 			<div className='flex items-center justify-center w-60 '>
 				{artistLoading ? (
-					<DisableBtn />
+					<LoadingBtn />
 				) : (
 					<motion.button
 						onClick={saveArtist}
@@ -452,7 +462,7 @@ const NewSong = () => {
 			{/* save */}
 			<div className='flex items-center justify-center w-60 '>
 				{albumLoading ? (
-					<DisableBtn />
+					<LoadingBtn />
 				) : (
 					<motion.button
 						onClick={saveAlbum}
@@ -537,7 +547,7 @@ export const FileUploader = ({
 	);
 };
 
-export const DisableBtn = () => {
+export const LoadingBtn = () => {
 	return (
 		<button
 			disabled

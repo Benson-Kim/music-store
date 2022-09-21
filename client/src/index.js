@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 
 import "./index.css";
+import "react-toastify/dist/ReactToastify.css";
+
 import App from "./App";
 import { initialState, reducer, StateProvider } from "./context/index";
 

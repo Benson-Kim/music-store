@@ -2,6 +2,7 @@ import { getAuth } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { ToastContainer } from "react-toastify";
 
 import { Dashboard, Home, Login } from "./components";
 import { app } from "./config/firebase.config";
@@ -42,6 +43,7 @@ const App = () => {
 
 	return (
 		<AnimatePresence exitBeforeEnter>
+			<ToastContainer />
 			<div className='flex items-center justify-center h-auto min-w-[680px] bg-primary'>
 				<Routes>
 					<Route path='/*' element={<Home />} />

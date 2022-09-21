@@ -60,6 +60,15 @@ export const getSongs = async () => {
 		return error.message;
 	}
 };
+
+export const deleteSong = async (id) => {
+	try {
+		const res = await axios.delete(`${baseURL}/del-song/${id}`);
+		return res.data;
+	} catch (error) {
+		return error.message;
+	}
+};
 // Artists
 
 export const saveNewArtist = async (data) => {
@@ -74,6 +83,15 @@ export const saveNewArtist = async (data) => {
 export const getArtists = async () => {
 	try {
 		const res = await axios.get(`${baseURL}/get-artists`);
+		return res.data;
+	} catch (error) {
+		return error.message;
+	}
+};
+
+export const deleteArtist = async (id) => {
+	try {
+		const res = await axios.delete(`${baseURL}/del-artist/${id}`);
 		return res.data;
 	} catch (error) {
 		return error.message;
